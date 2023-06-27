@@ -17,7 +17,6 @@ Prerequisites for nextflow: Java 11 or later is required
 ```
 cd AM_process2.0
 curl -s https://get.nextflow.io | bash
-
 ```
 This will create the `nextflow` main executable file in the current directory. 
 
@@ -142,15 +141,23 @@ docker.runOptions='-v <your_datadir>:/app/datadir -v <your_workdir>:/app/workdir
 **Parameters**
 
 ```
-datadir: location of data directory. Use absolute path and "/Users/usrname/..." instead of "~" in Mac OS.
-workdir: location of working directory. Use absolute path and "/Users/usrname/..." instead of "~" in Mac OS
-seriesName: series (GSE-XXX) to be analysed
-force: logical value to determine whether to continue to run and overwrite if there exists correponding output files. It is applied to some time-consuming calling steps including probe extraction, liftover, and segmentation. Default is false.
-memory: memory usage option in probe extraction. Generally for at most 8 threads, RAM 64GB -> 50, 96GB -> 80, 128GB -> 100. Default is 50.
-cleanup: logical value to determine whether to clean up intermediate files in the `plmData/` and `probeData/`. Default is true.
-undosd: a parameter for circular binary segmentation of relative copy numebr probe files (from `DNAcopy` R pcakge). Default is 1.
-genome: Version of reference genome . Because platform annotation files are based on hg19. The extracted probe files will be hg19. If specified as "hg38", this pipeline will convert the probes from hg19 to hg38 first and the following generated segment profiles will be hg38. If specified as "hg19", all of the output files are hg19. Default is "hg38".
-docker: logical value to determine whether to run with docker. Default is false.
+--datadir: location of data directory. Use absolute path and "/Users/usrname/..." instead of "~" in Mac OS.
+
+--workdir: location of working directory. Use absolute path and "/Users/usrname/..." instead of "~" in Mac OS
+
+--seriesName: series (GSE-XXX) to be analysed
+
+--force: logical value to determine whether to continue to run and overwrite if there exists correponding output files. It is applied to some time-consuming calling steps including probe extraction, liftover, and segmentation. Default is false.
+
+--memory: memory usage option in probe extraction. Generally for at most 8 threads, RAM 64GB -> 50, 96GB -> 80, 128GB -> 100. Default is 50.
+
+--cleanup: logical value to determine whether to clean up intermediate files in the `plmData/` and `probeData/`. Default is true.
+
+--undosd: a parameter for circular binary segmentation of relative copy numebr probe files (from `DNAcopy` R pcakge). Default is 1.
+
+--genome: Version of reference genome . Because platform annotation files are based on hg19. The extracted probe files will be hg19. If specified as "hg38", this pipeline will convert the probes from hg19 to hg38 first and the following generated segment profiles will be hg38. If specified as "hg19", all of the output files are hg19. Default is "hg38".
+
+--docker: logical value to determine whether to run with docker. Default is false.
 ```
 
 ### Local execution
