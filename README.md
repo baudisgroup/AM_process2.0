@@ -182,10 +182,18 @@ cd <workdir>
 
 Note: Runtime with Docker is much slower than local execution. Better to use if you just want to analyse individual series.
 
+## Running tips
 
-## Trace
+### Trace
 
-You can add the `-with-trace` command line option to generate execution trace file (more useful for local execution) or `-with-report` to generate execution report (more useful for Docker execution) when launching the pipeline execution.
+* `-with-trace`: generate execution trace file (more useful for local execution) 
+* `-with-report`: generate execution report (more useful for Docker execution)
+* `-with-timeline`: generate timeline report
+
+### Error strategy
+
+`process.errorStrategy` option in `nextflow.config` file allows you to define how an error condition is managed by all processes. "terminate" (for debugging) and "ignore" (for batch processing) are usually used.
+
 
 
 
