@@ -43,21 +43,17 @@ rm.near.dy <- function(x,distance=0.15) {
 
 adjustMedian <- function(datadir,seriesName,arrayName,adj_probe,genome){
   localProcessPath <- file.path(datadir,"processed",seriesName)
-  currentsegpath <- file.path(localProcessPath,arrayName,'segments,cn.tsv')
+  currentsegpath <- file.path(localProcessPath,arrayName,paste0('segments,cn,',genome,'.tsv'))
   segfile <- read.table(currentsegpath,header = T,stringsAsFactors = F)
   newsegfile <- segfile
   # value column is 5; probe column is 6
   med <- round(weightedMedian(newsegfile[,5],newsegfile[,6]),5)
   newsegfile[,5] <- round(newsegfile[,5]-med,4)
   
-  orisegpath <- file.path(localProcessPath,arrayName,'segments,cn,provenance.tsv')
-  if (!file.exists(orisegpath)){
-    write.table(segfile,file=orisegpath, sep="\t", quote=FALSE,row.names=FALSE)
-  }
   write.table(newsegfile,file=currentsegpath, sep="\t", quote=FALSE,row.names=FALSE)
   
   if (adj_probe) {
-    probefileName <- ifelse(genome == 'hg38','probes,cn,hg38.tsv','probes,cn.tsv')
+    probefileName <- paste0('probes,cn,',genome,'.tsv')
     probefile <- read.table(file.path(localProcessPath,arrayName,probefileName),
                             header = T,stringsAsFactors = F)
     probefile[,4] <- as.numeric(probefile[,4])
@@ -100,9 +96,9 @@ calculateWeightedMean <- function(idx, segmentData) {
   return (wm)
 }
 
-stepFilter <- function(datadir,seriesName,arrayName,lmd){
+stepFilter <- function(datadir,seriesName,arrayName,lmd,genome){
   localProcessPath <- file.path(datadir,"processed",seriesName)
-  segmentFile <- file.path(localProcessPath,arrayName,'segments,cn.tsv')
+  segmentFile <- file.path(localProcessPath,arrayName,paste0('segments,cn,',genome,'.tsv'))
   seg <- read.table(segmentFile,stringsAsFactors = F,header = T,sep='\t')
   if (!is.numeric(seg[,2]))  seg[,2] <- as.numeric(convertXYM(seg[,2]))
   seg <- seg[order(seg[,2], seg[,3]),]
@@ -318,7 +314,7 @@ generate_genomic_intervals <- function(workdir, genome='hg38', bin.size= 1000000
 }
 
 
-get_labelseg <- function(datadir,series,experiment = NULL){
+get_labelseg <- function(datadir,series,experiment = NULL,genome){
   data <- list()
   series_path <- file.path(datadir,'processed',series)
   files <- list.files(series_path,recursive = F)
@@ -326,7 +322,7 @@ get_labelseg <- function(datadir,series,experiment = NULL){
     files <- files[files %in% experiment]
   }
   for ( i in seq_len(length(files)) ){
-    labelsegname <- file.path(series_path ,files[i],'labelsegments,cn.tsv')
+    labelsegname <- file.path(series_path ,files[i],paste0('labelsegments,cn,',genome,'.tsv'))
     if(!file.exists(labelsegname)){ 
       next
       }
@@ -479,7 +475,7 @@ compute_posterior <- function(datadir,workdir,series,prior_code,seg,bins,fit,gen
     dir.create(file.path(datadir,'processed','seriesfreq'),showWarnings=F)
     freqpath <- file.path(datadir,'processed','seriesfreq',paste0(series,'-freq.rds'))
     if (!file.exists(freqpath)){
-      data <- get_labelseg(datadir,series)
+      data <- get_labelseg(datadir,series,genome=genome)
         # when a series contains 2 samples, average frequency doesn't make sense
       if (length(unique(data[,1])) == 2 ){
         data <- data[data[,1] != seg[1,1],]
@@ -548,14 +544,17 @@ compare_whole_shift <- function(datadir,workdir,series,meta,oriseriesSeg,shift_i
 
 update_seg <- function(series_path,experiment,relabelSeg,report,score,problem,genome='hg38',mergeseg=F){
   #update local data
+  plotfilename <- paste0('segments,cn,',genome,'.pdf')  
+  tablefilename <- paste0('labelsegments,cn,',genome,'.tsv')
+  oritablefilename <-  paste0('segments,cn,',genome,'.tsv')  
   if (is.null(relabelSeg)){
-    relabelSeg <- read.table(file.path(series_path,experiment,'segments,cn.tsv'),sep = '\t',header = T)
+    relabelSeg <- read.table(file.path(series_path,experiment,oritablefilename),sep = '\t',header = T)
     relabelSeg <- relabelSeg[,c(1,2,3,4,6,5)]
-    plot_segment_label(filepath = file.path(series_path, experiment),filename='label_cnsegment.pdf',data = relabelSeg,assembly = genome,no_label = T)
+    plot_segment_label(filepath = file.path(series_path, experiment),filename=plotfilename,data = relabelSeg,assembly = genome,no_label = T)
     problem <- paste0(problem,';failed-to-label')
   } else{
-    write.table(relabelSeg, file=file.path(series_path,experiment,'labelsegments,cn.tsv'),sep = '\t',quote=F,row.names = F)
-    plot_segment_label(filepath = file.path(series_path,experiment),filename='label_cnsegment.pdf',data = relabelSeg,assembly = genome)
+    write.table(relabelSeg, file=file.path(series_path,experiment, tablefilename),sep = '\t',quote=F,row.names = F)
+    plot_segment_label(filepath = file.path(series_path,experiment),filename=plotfilename,data = relabelSeg,assembly = genome)
   }
     
   #update report
@@ -575,7 +574,7 @@ update_seg <- function(series_path,experiment,relabelSeg,report,score,problem,ge
 shift_baseline <- function(datadir,workdir,series,prior_code,experiment,report,bins.lst,fit,whole_shift,genome,shift){
   series_path <- file.path(datadir,'processed',series)
 
-  labelSeg <- read.table(file.path(series_path ,experiment,'labelsegments,cn.tsv'),sep = '\t',header=T,colClasses = c("label"="character"))
+  labelSeg <- read.table(file.path(series_path ,experiment,paste0('labelsegments,cn,',genome,'.tsv')),sep = '\t',header=T,colClasses = c("label"="character"))
   relabelSeg <- labelseg(data = labelSeg,baseshift = substr(shift,1,1),genome=genome)
   
   idx <- which(report$expeiment == experiment)
@@ -622,7 +621,7 @@ process_noise <- function(datadir,workdir,series,prior_code,experiment,report,bi
   
   series_path <- file.path(datadir,'processed',series)
 
-  labelSeg <- read.table(file.path(series_path ,experiment,'labelsegments,cn.tsv'),sep = '\t',header=T,colClasses = c("label"="character"))
+  labelSeg <- read.table(file.path(series_path ,experiment,paste0('labelsegments,cn,',genome,'.tsv')),sep = '\t',header=T,colClasses = c("label"="character"))
   assess <- compute_posterior(datadir,workdir,series,prior_code,labelSeg,bins.lst,fit,genome=genome)
   target <- labelSeg
   method <- 'nochange'

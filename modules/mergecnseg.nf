@@ -7,14 +7,13 @@ process mergecnseg{
     tag {"$seriesName"}
     
     input:
-    val  previous_ready
     val  datadir 
     val  workdir
     val  seriesName
     val  genome
 
     output:
-    val "done"
+    val "$seriesName"
 
     script: 
     """

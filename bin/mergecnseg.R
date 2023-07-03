@@ -30,7 +30,7 @@ fail_label_idx <- which(report$lowCNA_cov == 0 & report$highCNA_cov == 0 & repor
 targetcids <- cids[union(fail_label_idx,noisy_idx)]
 
 for (cid in targetcids){
-  cidseg <- stepFilter(datadir,seriesName,cid,lmd=1)
+  cidseg <- stepFilter(datadir,seriesName,cid,lmd=1,genome)
   cidseg <- cidseg[!cidseg[,2] %in%  c(23,'X',24,'Y'),]
   # label new segment
   labelcidseg <- cidseg[,c(1,2,3,4,6,5)]

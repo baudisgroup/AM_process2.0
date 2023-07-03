@@ -51,7 +51,7 @@ l_shift_idx <- unique(c(l_shift_idx, which(report$lowCNA_cov > 0.25 & report$low
 l_shift_idx <- setdiff(setdiff(l_shift_idx,fail_label_idx),noisy_idx)
 
 bins.lst <- generate_genomic_intervals(workdir=workdir,genome=genome)
-labelcidseg <- get_labelseg(datadir=datadir,series=seriesName)
+labelcidseg <- get_labelseg(datadir=datadir,series=seriesName,genome=genome)
 if (is.null(labelcidseg)){return()}
 
 fit <- compute_fit(labelcidseg)

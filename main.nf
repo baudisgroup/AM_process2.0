@@ -1,8 +1,8 @@
 /* 
  * pipeline input parameters 
  */
-params.datadir 
-params.workdir 
+params.datadir = '/Users/hangjia/Data/test-pipeline/work_dir6'
+params.workdir = '/Users/hangjia/switchdrive/Private/work/AM-nextflow'
 params.seriesName  
 params.force = false 
 params.memory = 50
@@ -39,7 +39,12 @@ log.info """\
  include {mecan4cna} from './modules/mecan4cna.nf'
 
 
+
+
+
 workflow {
+
+    seriesName = Channel.of(params.seriesName.split(',')) 
 
     if (params.docker){
         datadir = '/app/datadir'
@@ -49,26 +54,28 @@ workflow {
         datadir = params.datadir
         workdir = params.workdir
         liftover_loc = "$workdir/bin/liftOver"
-    }
-    
-    seriesName = Channel.from(params.seriesName.split(','))
-    
+    }    
+               
     CRMAv2(datadir, workdir, seriesName, params.force, params.memory, params.cleanup)
-
     if (params.genome == "hg38"){
-        liftover(CRMAv2.out.collect(), datadir, workdir, seriesName, params.force, liftover_loc)
-        cnseg(liftover.out.collect(),datadir, workdir, seriesName, params.force, params.undosd, params.genome)
+        liftover(datadir, workdir, CRMAv2.out, params.force, liftover_loc,"probes,cn,hg19.tsv")
+        cnseg(datadir,  workdir, liftover.out, params.force, params.undosd, params.genome)
     } else if (params.genome == "hg19"){
-        cnseg(CRMAv2.out.collect(),datadir, workdir, seriesName, params.force, params.undosd, params.genome)        
+        cnseg(datadir, workdir, CRMAv2.out, params.force, params.undosd, params.genome)        
     } else{
         error "input genome is not supported"
     }
 
-    adjustcnmedian(cnseg.out.collect(), datadir, workdir, seriesName, "True", params.genome)
-    labelcnseg(adjustcnmedian.out.collect(), datadir, workdir, seriesName, params.genome)
-    mergecnseg(labelcnseg.out.collect(), datadir, workdir, seriesName, params.genome)
-    calcnseg(mergecnseg.out.collect(), datadir, workdir, seriesName, params.genome, params.docker)
-    mecan4cna(calcnseg.out.collect(), datadir, workdir, seriesName)
-}
+    adjustcnmedian(datadir, workdir, cnseg.out, "True", params.genome)
+    labelcnseg(datadir, workdir, adjustcnmedian.out, params.genome)
+    mergecnseg(datadir, workdir, labelcnseg.out, params.genome)
+    calcnseg(datadir, workdir, mergecnseg.out, params.genome, params.docker)
+    mecan4cna(datadir, workdir, calcnseg.out, params.genome)
+    
+    }
+
+
+
+
 
     

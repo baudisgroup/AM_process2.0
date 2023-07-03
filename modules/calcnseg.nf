@@ -8,7 +8,6 @@ process calcnseg{
     tag {"$seriesName"}
     
     input:
-    val  previous_ready
     val  datadir 
     val  workdir
     val  seriesName
@@ -16,7 +15,7 @@ process calcnseg{
     val  docker 
 
     output:
-    val "done"
+    val "$seriesName"
 
     script: 
     """

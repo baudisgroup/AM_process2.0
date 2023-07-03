@@ -15,7 +15,7 @@ process CRMAv2{
     val  cleanup
     
     output:
-      val "done"
+    val "$seriesName"
 
 
     script:       

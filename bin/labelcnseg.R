@@ -23,7 +23,7 @@ dir.create(reportpath,showWarnings=F,recursive = T)
 
 report <- list()
 for (cid in cids) {
-  samplepath <- sprintf('%s/%s/segments,cn.tsv',localProcessPath,cid)
+  samplepath <- sprintf('%s/%s/segments,cn,%s.tsv',localProcessPath,cid,genome)
   if (!file.exists(samplepath)) stop(paste('cnseg file not found for',seriesName, cid))
     
   cidseg <- read.table(samplepath,sep = '\t',header=T)
@@ -51,15 +51,17 @@ for (cid in cids) {
   highCov <-  cov$highCNA_cov
   normalCov <- cov$normal_cov
   lowCov_ratio <- cov$lowCNA_ratio
-    
+  
+  plotfilename <- paste0('segments,cn,',genome,'.pdf')  
+  tablefilename <- paste0('labelsegments,cn,',genome,'.tsv')
   if (!is.null(labelcidseg)){
       # plot and save image of labelled segments
-    plot_segment_label(filepath = file.path(localProcessPath,cid),filename='label_cnsegment.pdf',data = labelcidseg,assembly = genome)
+    plot_segment_label(filepath = file.path(localProcessPath,cid),filename=plotfilename,data = labelcidseg,assembly = genome)
       # write labelled segment file
-    write.table(labelcidseg, file=file.path(localProcessPath,cid,'labelsegments,cn.tsv'),sep = '\t',row.names = F,quote=F)
+    write.table(labelcidseg, file=file.path(localProcessPath,cid,tablefilename),sep = '\t',row.names = F,quote=F)
     note <- "initial"
   } else{
-    plot_segment_label(filepath = file.path(localProcessPath,cid),filename='label_cnsegment.pdf',data = cidseg[,c(1,2,3,4,6,5)],assembly = genome,no_label = T)
+    plot_segment_label(filepath = file.path(localProcessPath,cid),filename= plotfilename,data = cidseg[,c(1,2,3,4,6,5)],assembly = genome,no_label = T)
     note <- "failed-to-label"
   }
     
@@ -77,7 +79,7 @@ log_path <- file.path(datadir,"processed",'logs')
 dir.create(log_path, showWarnings = F, recursive = TRUE)
 
 segfiles <- list.files(localProcessPath,recursive = T, full.names =T )
-if (sum(grepl("label_cnsegment.pdf",segfiles)) == length(cids)){
+if (sum(grepl(plotfilename,segfiles)) == length(cids)){
   log <- paste(format(Sys.time(), "%y-%m-%d %H:%M:%S"),"labelseg",seriesName,"complete") 
 } else{
   log <- paste(format(Sys.time(), "%y-%m-%d %H:%M:%S"),"labelseg",seriesName,"complete but file numbers aberrant") 

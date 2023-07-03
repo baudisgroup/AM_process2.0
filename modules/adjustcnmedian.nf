@@ -6,7 +6,6 @@ process adjustcnmedian{
     tag {"$seriesName"}
     
     input:
-    val  previous_ready
     val  datadir 
     val  workdir
     val  seriesName
@@ -15,7 +14,7 @@ process adjustcnmedian{
 
     
     output:
-      val "done"
+    val "$seriesName"
 
 
     script:       

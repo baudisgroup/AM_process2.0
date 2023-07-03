@@ -19,15 +19,15 @@ if (length(cids) == 0) stop("`seriesName` is invalid")
 
 localProcessPath <- file.path(datadir,"processed",seriesName)
 
-targetcids <- checkFileIncomplete(force, localProcessPath,'segments,cn.tsv', cids)
+targetcids <- checkFileIncomplete(force, localProcessPath,paste0('segments,cn,',genome,'.tsv'), cids)
 
-probefileName <- ifelse(genome == 'hg38','probes,cn,hg38.tsv','probes,cn.tsv')
+probefileName <- paste0('probes,cn,',genome,'.tsv')
 
 if (length(targetcids) > 0) {
   for (cid in targetcids) {
     if (!file.exists(sprintf('%s/%s/%s',localProcessPath,cid,probefileName))) stop(paste('cn probe file not found for',seriesName, cid))
     
-    fseg <- file.path(localProcessPath,cid,'segments,cn.tsv')
+    fseg <- file.path(localProcessPath,cid,paste0('segments,cn,',genome,'.tsv'))
     cat("sample_id","chromosome","start", "end", "value", "probes\n",sep="\t",file=fseg,append = F)
 
     alldata <- read.table(sprintf('%s/%s/%s',
@@ -67,7 +67,7 @@ log_path <- file.path(datadir,"processed",'logs')
 dir.create(log_path, showWarnings = F, recursive = TRUE)
 
 segfiles <- list.files(localProcessPath,recursive = T, full.names =T )
-if (sum(grepl("segments,cn.tsv",segfiles)) == length(cids)){
+if (sum(grepl(paste0("segments,cn,",genome,".tsv"),segfiles)) == length(cids)){
   log <- paste(format(Sys.time(), "%y-%m-%d %H:%M:%S"),"CN-segmentation",seriesName,"complete") 
 } else{
   log <- paste(format(Sys.time(), "%y-%m-%d %H:%M:%S"),"CN-segmentation",seriesName,"complete but file numbers aberrant") 

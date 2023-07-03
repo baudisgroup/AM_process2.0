@@ -17,7 +17,7 @@ localProcessPath <- file.path(datadir,"processed",seriesName)
 dir.create(localProcessPath,showWarnings = F)
 
 chipTypes <- list.files(file.path(datadir,"rawData",seriesName))
-
+if (length(chipTypes) == 0) stop("rawData is not found for ", seriesName)
 ####### repeat for each chipType ######
 cidcount = 0
 for (chipType in chipTypes){
@@ -31,7 +31,7 @@ for (chipType in chipTypes){
   cids <- gsub(".CEL","",files)
   if (length(cids) == 0) stop("rawData is not found for ", seriesName)
   cidcount = cidcount + length(cids)
-  targetcids <- checkFileIncomplete(force, localProcessPath, 'probes,cn.tsv', cids)
+  targetcids <- checkFileIncomplete(force, localProcessPath, 'probes,cn,hg19.tsv', cids)
   
   ################## run CRMAv2########################
   if (length(targetcids) > 0){
@@ -104,7 +104,7 @@ for (chipType in chipTypes){
         colnames(out) <- c("PROBEID","CHRO","BASEPOS","VALUE")
         samplepath <- file.path(localProcessPath,sampleIDs[i])
         if (!dir.exists(samplepath))  dir.create(samplepath)
-        samplefile <- file.path(samplepath,'probes,cn.tsv')
+        samplefile <- file.path(samplepath,'probes,cn,hg19.tsv')
         if (!file.exists(samplefile)){
           write.table(out,file = samplefile, sep = "\t",row.names = F,col.names = T,quote = F)
         } else{
@@ -129,7 +129,7 @@ for (chipType in chipTypes){
 
 probefiles <- list.files(localProcessPath,recursive = T, full.names =T )  
 
-if (sum(grepl("probes,cn.tsv",probefiles)) == cidcount){
+if (sum(grepl("probes,cn,hg19.tsv",probefiles)) == cidcount){
   log <- paste(format(Sys.time(), "%y-%m-%d %H:%M:%S"),"CRMAv2",seriesName,"complete") 
 } else{
   log <- paste(format(Sys.time(), "%y-%m-%d %H:%M:%S"),"CRMAv2",seriesName,"complete but file numbers aberrant") 

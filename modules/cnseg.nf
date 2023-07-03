@@ -6,7 +6,6 @@ process cnseg{
     tag {"$seriesName"}
     
     input:
-    val  previous_ready
     val  datadir 
     val  workdir
     val  seriesName
@@ -15,7 +14,7 @@ process cnseg{
     val  genome
     
     output:
-      val "done"
+    val "$seriesName"
 
 
     script:       

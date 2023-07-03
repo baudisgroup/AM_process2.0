@@ -8,18 +8,18 @@ process mecan4cna{
     tag {"$seriesName"}
     
     input:
-    val  previous_ready
     val  datadir 
     val  workdir
     val  seriesName
+    val  genome
 
     output:
-    val  "done"
+    val "$seriesName"
 
     script: 
     """
     dir="$datadir/processed/$seriesName"
-    filename="labelsegments,cn.tsv"
+    filename="labelsegments,cn,$genome\.tsv"
 
     mapfile=\$(find "\$dir" -type f -name "\$filename")
     

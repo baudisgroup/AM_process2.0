@@ -1032,7 +1032,8 @@ def cli(input_dir, output_dir, chain_file, test_mode, file_indexing, segment_inp
     # Remove temp files.
 #    subprocess.run('rm *.bed *.unmapped ./tmp/*.*  &>/dev/null', shell=True)
 #    subprocess.run('rm -rf tmp', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    print('Done! Finished in {}'.format(datetime.now() - startTime))
+   
+    print('Done! Finished in {}'.format(datetime.now() - startTime),file=fo)
 
 ##########################################################################
 #
