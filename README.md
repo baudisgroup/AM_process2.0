@@ -173,7 +173,7 @@ Default values for parameters can be set in `main.nf`. If in this case, you don'
 
 ### Docker 
 
-Before running, make sure you have modified the `nextflow.config` file. 
+Before running, make sure you have modified the `nextflow.config` file and docker engine is running on your computer. 
 
 ```
 cd <workdir>
