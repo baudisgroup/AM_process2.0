@@ -29,7 +29,7 @@ RUN R -e "remotes::install_github('baudisgroup/LabelSeg')"
 RUN R -q -e "if (!requireNamespace('BiocManager', quietly = TRUE)) install.packages('BiocManager',repos = 'https://cloud.r-project.org/')"
 RUN R -q -e "BiocManager::install(c('aroma.core','DNAcopy','affxparser'))"
 
-RUN R -q -e "install.packages(c('aroma.affymetrix','ACNE','pastecs','genlasso','R.utils','matrixStats','mongolite','tibble','plyr'),repos = 'https://cloud.r-project.org/')"
+RUN R -q -e "install.packages(c('aroma.affymetrix','ACNE','pastecs','genlasso','R.utils','matrixStats','mongolite','tibble','plyr','robfilter','kernlab', 'e1071'),repos = 'https://cloud.r-project.org/')"
 RUN R -q -e "install.packages('sfit',repos = 'https://henrikbengtsson.r-universe.dev')"
 
 WORKDIR /app

@@ -28,7 +28,7 @@ biosamples_collection <- mongo(collection="biosamples",
 meta <- get_meta(collection=biosamples_collection,series=seriesName)
 
 localProcessPath <- file.path(datadir,"processed",seriesName)
-reportpath <- file.path(datadir,"processed",'data_quality_report','cnseg',paste0(seriesName,'.txt'))
+reportpath <- file.path(datadir,"processed",'data_quality_report','cnseg','calibration',paste0(seriesName,'.txt'))
 
 if (!file.exists(reportpath)) stop(paste('No data quality report for',seriesName))
 

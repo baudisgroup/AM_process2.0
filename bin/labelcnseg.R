@@ -18,7 +18,7 @@ localProcessPath <- file.path(datadir,"processed",seriesName)
 cids <- list.files(localProcessPath)
 if (length(cids) == 0) stop("`seriesName` is invalid")
 
-reportpath <- file.path(datadir,"processed",'data_quality_report','cnseg')
+reportpath <- file.path(datadir,"processed",'data_quality_report','cnseg','calibration')
 dir.create(reportpath,showWarnings=F,recursive = T)
 
 report <- list()

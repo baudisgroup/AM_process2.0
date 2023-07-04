@@ -99,10 +99,14 @@ data_dir/
 ├── probeData                                    # intermediate directory when processing probe data
 ├── processed                                    # OUTPUT data directory
 │   ├── logs                                       # log files
-│   ├── data_quality_report                        # metrics of labeledsegment profiles and record of calibration steps 
+│   ├── data_quality_report                         
 │   │   └── cnseg
-│   │       ├── <series1>.txt
-│   │       └── <series2>.txt
+│   │       ├──calibration                          # metrics of labeledsegment profiles and record of calibration steps
+│   │       │  ├── <series1>.txt
+│   │       │  └── <series2>.txt
+│   │       └──CNARA_assessment                     # final assessment of reliability for segment profiles 
+│   │          ├── <series1>.txt
+│   │          └── <series2>.txt
 │   ├── seriesFreq                                 # CNV frequency across samples in non-Progenetix series (used in calibration)
 │   │   └── <series1>-freq.rds
 │   ├── <series1>                                  # calling results of specific series
@@ -151,7 +155,7 @@ docker.runOptions='-v <your_datadir>:/app/datadir -v <your_workdir>:/app/workdir
 
 --memory: memory usage option in probe extraction. Generally for at most 8 threads, RAM 64GB -> 50, 96GB -> 80, 128GB -> 100. Default is 50.
 
---cleanup: logical value to determine whether to clean up intermediate files in the `plmData/` and `probeData/`. Default is true.
+--cleanup: logical value to determine whether to clean up intermediate files in the `plmData/` and `probeData/` of data directory. Default is true.
 
 --undosd: a parameter for circular binary segmentation of relative copy numebr probe files (from `DNAcopy` R pcakge). Default is 1.
 

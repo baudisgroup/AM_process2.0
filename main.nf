@@ -11,19 +11,19 @@ params.undosd = 1
 params.genome= "hg38"
 params.docker = false
 
-
 log.info """\
          CNV CALLING PIPELINE    
          ===================================
-         datadir       : $params.datadir
-         workdir       : $params.workdir
-         series        : $params.seriesName
-         force         : $params.force 
-         memory        : $params.memory
-         cleanup       : $params.cleanup
-         undosd_cnseg  : $params.undosd
-         genome        : $params.genome
-         docker        : $params.docker
+         datadir         : $params.datadir
+         workdir         : $params.workdir
+         series          : $params.seriesName
+         force           : $params.force 
+         memory          : $params.memory
+         cleanup         : $params.cleanup
+         undosd_cnseg    : $params.undosd
+         genome          : $params.genome
+         CNARA_assessment: $params.assessment
+         docker          : $params.docker
          """
          .stripIndent()
 
@@ -37,7 +37,7 @@ log.info """\
  include {mergecnseg} from './modules/mergecnseg.nf'
  include {calcnseg} from './modules/calcnseg.nf'
  include {mecan4cna} from './modules/mecan4cna.nf'
-
+ include {CNARA} from './modules/CNARA.nf'
 
 
 
@@ -71,7 +71,7 @@ workflow {
     mergecnseg(datadir, workdir, labelcnseg.out, params.genome)
     calcnseg(datadir, workdir, mergecnseg.out, params.genome, params.docker)
     mecan4cna(datadir, workdir, calcnseg.out, params.genome)
-    
+    CNARA(datadir, workdir,  mecan4cna.out, params.genome)
     }
 
 
